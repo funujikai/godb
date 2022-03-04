@@ -1,0 +1,13 @@
+# Editors
+*.swp
+.vscode
+.idea
+
+# Profiling
+*.out
+
+# Databases
+*.db
+
+# Others
+.DS_Store
