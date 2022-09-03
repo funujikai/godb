@@ -66,6 +66,7 @@ func (raw *RawSQL) DoWithIterator() (Iterator, error) {
 	return raw.db.doWithIterator(raw.sql, raw.arguments)
 }
 
+// Tambahan FZL
 // function khusus exec store procedure dengan transaction
 // tambahkan SELECT 1 AS ADA, karena godb butuh return jika ingin menggunakan transaction, dan tidak bsa transaction menggunakan DoWithIterator
 func (raw *RawSQL) DoExec() error {
