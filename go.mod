@@ -1,4 +1,4 @@
-module github.com/samonzeweb/godb
+module github.com/funujikai/godb
 
 go 1.12
 
