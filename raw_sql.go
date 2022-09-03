@@ -65,3 +65,18 @@ func (raw *RawSQL) Do(record interface{}) error {
 func (raw *RawSQL) DoWithIterator() (Iterator, error) {
 	return raw.db.doWithIterator(raw.sql, raw.arguments)
 }
+
+// function khusus exec store procedure dengan transaction
+// tambahkan SELECT 1 AS ADA, karena godb butuh return jika ingin menggunakan transaction, dan tidak bsa transaction menggunakan DoWithIterator
+func (raw *RawSQL) DoExec() error {
+
+	type StoreProcedure struct {
+		Sp string `db:"ADA"`
+	}
+	
+	Select := make([]StoreProcedure, 0)
+
+	err := raw.db.RawSQL(raw.sql+" SELECT 1 AS ADA").Do(&Select)
+
+	return err
+}
