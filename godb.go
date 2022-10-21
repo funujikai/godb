@@ -216,3 +216,14 @@ func (db *DB) Ping() error {
 func (db *DB) PingContext(ctx context.Context) error {
 	return db.sqlDB.PingContext(ctx)
 }
+
+
+// Tambahan FZL
+func (db *DB) SetMaxOpenConns(limit int) {
+	db.sqlDB.SetMaxOpenConns(limit)
+}
+
+// Tambahan FZL
+func (db *DB) SetMaxIdleConns(limit int) {
+	db.sqlDB.SetMaxIdleConns(limit)
+}
