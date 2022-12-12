@@ -37,6 +37,10 @@ func (db *DB) getQueryable(query string) (queryable, error) {
 	return db.getQueryableWithOptions(query, false, false)
 }
 
+func (db *DB) GetQueryable(query string) (queryable, error) {
+	return db.getQueryableWithOptions(query, false, false)
+}
+
 // getQueryableWithOptions manages prepared statement, and its cache.
 // It returns a queryable interface, ignoring a possible transaction if noTx is
 // true, and ignoring prepared statement cache is noStmtCache is true.
