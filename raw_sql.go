@@ -1,8 +1,6 @@
 package godb
 
 import "database/sql"
-import "html"
-import "fmt"
 
 // RawSQL allows the execution of a custom SQL query.
 // Initialize it with the RawSQL method.
@@ -41,13 +39,6 @@ func (raw *RawSQL) Do(record interface{}) error {
 
 	// the function which will return the pointers according to the given columns
 	pointersGetter := func(record interface{}, columns []string) ([]interface{}, error) {
-
-		//fzl escape string
-		for i, v := range columns {
-			columns[i] = html.EscapeString(v)
-			fmt.Println(columns[i])
-		}
-
 		var pointers []interface{}
 		pointers, err := recordInfo.structMapping.GetPointersForColumns(record, columns...)
 		return pointers, err
