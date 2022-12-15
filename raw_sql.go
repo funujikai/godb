@@ -59,12 +59,12 @@ func (raw *RawSQL) Do(record interface{}) error {
 	return err
 }
 
-//FZL sama dengan Do
-func (raw *RawSQL) DoRaw(record interface{}) error {
+//FZL sama dengan Do, untuk ngambil semua yang ada di RawSQL untuk log
+func (raw *RawSQL) DoRaw(record interface{}) *RawSQL {
 	recordInfo, err := buildRecordDescription(record)
 	if err != nil {
 		raw.err = err
-		return raw.err
+		return raw
 	}
 
 	// the function which will return the pointers according to the given columns
@@ -72,13 +72,13 @@ func (raw *RawSQL) DoRaw(record interface{}) error {
 		var pointers []interface{}
 		pointers, err := recordInfo.structMapping.GetPointersForColumns(record, columns...)
 		raw.err = err
-		return pointers, raw.err
+		return pointers, raw
 	}
 
 	rowsCount, err := raw.db.doSelectOrWithReturning(raw.sql, raw.arguments, recordInfo, pointersGetter)
 	if err != nil {
 		raw.err = err
-		return raw.err
+		return raw
 	}
 
 	// When a single instance is requested but not found, sql.ErrNoRows is
@@ -90,12 +90,6 @@ func (raw *RawSQL) DoRaw(record interface{}) error {
 
 	raw.err = err
 
-	return raw.err
-}
-
-// FZL
-// Ambil semua isi *RawSQL Log
-func (raw *RawSQL) Log() *RawSQL {	
 	return raw
 }
 
