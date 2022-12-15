@@ -15,6 +15,7 @@ type RawSQL struct {
 	db        *DB
 	sql       string
 	arguments []interface{}
+	err		  error // FZL tambahan untuk chain error
 }
 
 // RawSQL create a RawSQL structure, allowing the executing of a custom sql
@@ -56,6 +57,42 @@ func (raw *RawSQL) Do(record interface{}) error {
 	}
 
 	return err
+}
+
+
+
+//FZL sama dengan Do
+func (raw *RawSQL) DoRaw(record interface{}) error {
+	recordInfo, raw.err := buildRecordDescription(record)
+	if raw.err != nil {
+		return raw.err
+	}
+
+	// the function which will return the pointers according to the given columns
+	pointersGetter := func(record interface{}, columns []string) ([]interface{}, error) {
+		var pointers []interface{}
+		pointers, raw.err := recordInfo.structMapping.GetPointersForColumns(record, columns...)
+		return pointers, raw.err
+	}
+
+	rowsCount, raw.err := raw.db.doSelectOrWithReturning(raw.sql, raw.arguments, recordInfo, pointersGetter)
+	if raw.err != nil {
+		return raw.err
+	}
+
+	// When a single instance is requested but not found, sql.ErrNoRows is
+	// returned like QueryRow in database/sql package.
+	if !recordInfo.isSlice && rowsCount == 0 {
+		raw.err = sql.ErrNoRows
+	}
+
+	return raw.err
+}
+
+// FZL
+// Ambil semua isi *RawSQL Log
+func (raw *RawSQL) Log() *RawSQL {	
+	return raw
 }
 
 // DoWithIterator executes the select query and returns an Iterator allowing
