@@ -59,24 +59,25 @@ func (raw *RawSQL) Do(record interface{}) error {
 	return err
 }
 
-
-
 //FZL sama dengan Do
 func (raw *RawSQL) DoRaw(record interface{}) error {
-	recordInfo, raw.err := buildRecordDescription(record)
-	if raw.err != nil {
+	recordInfo, err := buildRecordDescription(record)
+	if err != nil {
+		raw.err = err
 		return raw.err
 	}
 
 	// the function which will return the pointers according to the given columns
 	pointersGetter := func(record interface{}, columns []string) ([]interface{}, error) {
 		var pointers []interface{}
-		pointers, raw.err := recordInfo.structMapping.GetPointersForColumns(record, columns...)
+		pointers, err := recordInfo.structMapping.GetPointersForColumns(record, columns...)
+		raw.err = err
 		return pointers, raw.err
 	}
 
-	rowsCount, raw.err := raw.db.doSelectOrWithReturning(raw.sql, raw.arguments, recordInfo, pointersGetter)
-	if raw.err != nil {
+	rowsCount, err := raw.db.doSelectOrWithReturning(raw.sql, raw.arguments, recordInfo, pointersGetter)
+	if err != nil {
+		raw.err = err
 		return raw.err
 	}
 
@@ -85,6 +86,9 @@ func (raw *RawSQL) DoRaw(record interface{}) error {
 	if !recordInfo.isSlice && rowsCount == 0 {
 		raw.err = sql.ErrNoRows
 	}
+
+
+	raw.err = err
 
 	return raw.err
 }
